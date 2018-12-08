@@ -5,17 +5,13 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.internal.GsonBuildConfig;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,6 +25,8 @@ public class SearchMoviesActivity extends AppCompatActivity {
     private static final String API_KEY = "c623d8ce";
     private Retrofit retrofit;
     private MoviesAPIService moviesAPIService;
+
+    private MovieRepository repository;
 
     private ImageView poster;
     private TextView title;
@@ -48,6 +46,8 @@ public class SearchMoviesActivity extends AppCompatActivity {
     }
 
     private void init(){
+
+        repository = new MovieRepository(getApplication());
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -73,6 +73,10 @@ public class SearchMoviesActivity extends AppCompatActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchMovies(query);
         }
+        else if(intent.getSerializableExtra("movie") != null){
+            Movie movie = (Movie)intent.getSerializableExtra("movie");
+            showSearchedMovie(movie);
+        }
     }
 
     private void searchMovies(String query) {
@@ -81,11 +85,11 @@ public class SearchMoviesActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {
                 Movie movie = response.body();
-                Picasso.get().load(movie.getPoster()).into(poster);
-                title.setText(movie.getTitle());
-                genre.setText(movie.getGenre());
-                plot.setText(movie.getPlot());
-                year.setText(movie.getYear());
+                if(movie == null)
+                    //napraj nesto
+                    return;
+                repository.insert(movie);
+                showSearchedMovie(movie);
             }
 
             @Override
@@ -93,5 +97,13 @@ public class SearchMoviesActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void showSearchedMovie(Movie movie){
+        Picasso.get().load(movie.getPoster()).into(poster);
+        title.setText(movie.getTitle());
+        genre.setText(movie.getGenre());
+        plot.setText(movie.getPlot());
+        year.setText(movie.getYear());
     }
 }

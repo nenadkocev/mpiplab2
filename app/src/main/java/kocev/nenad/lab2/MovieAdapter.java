@@ -1,13 +1,22 @@
 package kocev.nenad.lab2;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import javax.xml.datatype.Duration;
+
+import retrofit2.Retrofit;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
@@ -29,14 +38,26 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder movieViewHolder, int i) {
-        Movie movie = movies.get(i);
-        movieViewHolder.getRating().setText(movie.getImdbRating());
-        movieViewHolder.getTitle().setText(movie.getTitle());
-        movieViewHolder.getYear().setText(movie.getYear());
+        final Movie movie = movies.get(i);
+        Picasso.get().load(movie.getPoster()).into(movieViewHolder.imageView);
+        movieViewHolder.rating.setText(movie.getImdbRating());
+        movieViewHolder.title.setText(movie.getTitle());
+        movieViewHolder.year.setText(movie.getYear());
+
+        movieViewHolder.parentLayout.setOnClickListener((view) -> {
+            Intent intent = new Intent(context, SearchMoviesActivity.class);
+            intent.putExtra("movie", movie);
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
         return movies.size();
+    }
+
+    public void update(List<Movie> movies){
+        this.movies = movies;
+        this.notifyDataSetChanged();
     }
 }

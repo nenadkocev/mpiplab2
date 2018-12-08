@@ -1,6 +1,7 @@
 package kocev.nenad.lab2;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ public class MoviesActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MovieAdapter adapter;
     private List<Movie> movieList;
+    private MovieRepository repository;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -25,7 +27,7 @@ public class MoviesActivity extends AppCompatActivity {
     }
 
     private void init() {
-        movieList = new ArrayList<>();
+        repository = new MovieRepository(getApplication());
         recyclerView = findViewById(R.id.recyclerViewSearchActivity);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -45,5 +47,12 @@ public class MoviesActivity extends AppCompatActivity {
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
         return true;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        movieList = repository.getAllMovies();
+        adapter.update(movieList);
     }
 }
