@@ -1,5 +1,6 @@
 package kocev.nenad.lab2;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -15,5 +16,5 @@ public interface MovieDao {
     void deleteAll();
 
     @Query("SELECT * FROM MOVIE_TABLE")
-    List<Movie> getAllMovies();
+    LiveData<List<Movie>> getAllMovies();
 }
