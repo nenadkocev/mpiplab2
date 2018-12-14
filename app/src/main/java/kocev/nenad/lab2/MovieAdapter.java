@@ -38,15 +38,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder movieViewHolder, int i) {
+        if(movies.size() == 0)
+            return;
         final Movie movie = movies.get(i);
         Picasso.get().load(movie.getPoster()).into(movieViewHolder.imageView);
-        movieViewHolder.rating.setText(movie.getImdbRating());
         movieViewHolder.title.setText(movie.getTitle());
         movieViewHolder.year.setText(movie.getYear());
 
         movieViewHolder.parentLayout.setOnClickListener((view) -> {
             Intent intent = new Intent(context, SearchMoviesActivity.class);
-            intent.putExtra("movie", movie);
+            intent.putExtra("movieId", movie.getImdbID());
             context.startActivity(intent);
         });
     }

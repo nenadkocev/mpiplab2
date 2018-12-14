@@ -6,7 +6,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-@Database(entities = {Movie.class}, version = 1)
+@Database(entities = {Movie.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract MovieDao MovieDao();
     private static volatile AppDatabase INSTANCE;
@@ -18,7 +18,8 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(
                             context,
                             AppDatabase.class,
-                            "word_database")
+                            "movie_database")
+                            .fallbackToDestructiveMigration()
                     .build();
                 }
             }

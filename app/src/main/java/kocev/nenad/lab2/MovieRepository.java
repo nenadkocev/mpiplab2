@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutionException;
 
 public class MovieRepository {
     private MovieDao movieDao;
-    private List<Movie> movies;
 
     public MovieRepository(Application application){
         AppDatabase database = AppDatabase.getDatabaseConnection(application.getApplicationContext());

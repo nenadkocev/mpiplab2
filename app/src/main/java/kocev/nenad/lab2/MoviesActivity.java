@@ -1,7 +1,6 @@
 package kocev.nenad.lab2;
 
 import android.arch.lifecycle.LiveData;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +10,7 @@ import android.view.MenuInflater;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -27,7 +27,7 @@ public class MoviesActivity extends AppCompatActivity {
     private SearchView searchView;
 
     private static final String BASE_URL = "http://www.omdbapi.com";
-    private static final String API_KEY = "c623d8ce";
+    private static final String API_KEY = "bd67919d";
     private Retrofit retrofit;
     private MoviesAPIService moviesAPIService;
     @Override
@@ -39,10 +39,11 @@ public class MoviesActivity extends AppCompatActivity {
 
     private void init() {
         repository = new MovieRepository(getApplication());
-        movieList = repository.getAllMovies().getValue();
         recyclerView = findViewById(R.id.recyclerViewSearchActivity);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        movieList = new ArrayList<>();
         adapter = new MovieAdapter(this, movieList);
         recyclerView.setAdapter(adapter);
 
@@ -50,6 +51,8 @@ public class MoviesActivity extends AppCompatActivity {
         liveData.observe(MoviesActivity.this, (List<Movie> movieList) -> {
             adapter.update(movieList);
         });
+
+        repository.deleteAll();
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -79,24 +82,24 @@ public class MoviesActivity extends AppCompatActivity {
         return true;
     }
 
-
     private void searchMovies(String query) {
-        Call<Movie> call = moviesAPIService.listMovies(API_KEY,"short",query);
+        Call<MoviesResponse> call = moviesAPIService.listMovies(API_KEY,query);
 
-        call.enqueue(new Callback<Movie>() {
+        call.enqueue(new Callback<MoviesResponse>() {
             @Override
-            public void onResponse(Call<Movie> call, Response<Movie> response) {
-                Movie movie = response.body();
-                repository.insert(movie);
-                Intent intent = new Intent(getApplicationContext(), SearchMoviesActivity.class);
-                intent.putExtra("movie", movie);
-                startActivity(intent);
+            public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
+                List<Movie> movie = response.body().getSearch();
+
+                if(movie != null)
+                    movie.forEach(m -> {repository.insert(m);});
+
             }
 
             @Override
-            public void onFailure(Call<Movie> call, Throwable t) {
+            public void onFailure(Call<MoviesResponse> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 }

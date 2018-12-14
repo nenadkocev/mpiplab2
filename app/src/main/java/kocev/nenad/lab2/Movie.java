@@ -18,37 +18,21 @@ public class Movie implements Serializable {
     @ColumnInfo(name = "year")
     private String Year;
 
-    @ColumnInfo(name = "released")
-    private String Released;
-
-    @ColumnInfo(name = "genre")
-    private String Genre;
-
-    @ColumnInfo(name = "director")
-    private String Director;
-
-    @ColumnInfo(name = "plot")
-    private String Plot;
-
     @ColumnInfo(name = "poster")
     private String Poster;
 
-    @ColumnInfo(name = "imdbRating")
-    private String imdbRating;
+    @ColumnInfo(name = "type")
+    private String Type;
 
     @ColumnInfo(name = "imdbId")
     private String imdbID;
 
-    public Movie(String Title, String Year, String Released, String Genre, String Director, String Plot, String Poster, String imdbRating, String imdbID) {
+    public Movie(String Title, String Year, String Poster,String imdbID, String Type) {
         this.Title = Title;
         this.Year = Year;
-        this.Released = Released;
-        this.Genre = Genre;
-        this.Director = Director;
-        this.Plot = Plot;
         this.Poster = Poster;
-        this.imdbRating = imdbRating;
         this.imdbID = imdbID;
+        this.Type = Type;
     }
 
     public void setId(Long id) {
@@ -67,32 +51,18 @@ public class Movie implements Serializable {
         return Year;
     }
 
-    public String getReleased() {
-        return Released;
-    }
-
-    public String getGenre() {
-        return Genre;
-    }
-
-    public String getDirector() {
-        return Director;
-    }
-
-    public String getPlot() {
-        return Plot;
-    }
 
     public String getPoster() {
         return Poster;
     }
 
-    public String getImdbRating() {
-        return imdbRating;
-    }
 
     public String getImdbID() {
         return imdbID;
+    }
+
+    public String getType() {
+        return Type;
     }
 }
 
